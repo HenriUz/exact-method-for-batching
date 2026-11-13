@@ -73,6 +73,10 @@ def solve(problem: Problem):
 
     start = perf_counter()
     for k in range(1, problem.a + 1):
+        # The best possible value for z* is UB, so if the ratio UB / k is less than or equal to the best value of z found, no other value will be better.
+        if problem.ub / k <= optimal[0]:
+            break
+
         prob, x, y = solve_k(problem, Uo, k)
         stats = prob.solve(pulp.COIN_CMD(msg=False))
 
