@@ -17,10 +17,10 @@ def generate_particle(problem: Problem) -> SetParticle:
     """
     Generates a particle with random aisles, each with a 50% inclusion probability.
 
-    Args:
+    # Args:
         problem (Problem): Dataset information.
 
-    Returns:
+    # Returns:
         particle (SetParticle): Particle created.
     """
 
@@ -55,12 +55,12 @@ def generate_initial_swarm(
     """
     Populates the swarm with randomly generated particles and returns the global best.
 
-    Args:
+    # Args:
         problem (Problem): Dataset information.
         size (int): Swarm size.
         swarm (list): Empty list to be populated.
 
-    Returns:
+    # Returns:
         best_particle (tuple[float, set[int]]): Objective value and aisle set of the best particle found.
     """
 
@@ -86,11 +86,11 @@ def scalar_multiplication(
 
     The scalar must be in [0, 1]: 1 returns the full velocity, and 0 returns an empty set.
 
-    Args:
+    # Args:
         scalar (float): Scaling factor in [0, 1].
         velocity (set[tuple[str, int]]): Set of (operator, aisle) operations.
 
-    Returns:
+    # Returns:
         subset (set[tuple[str, int]]): Randomly sampled subset of the velocity.
     """
 
@@ -109,11 +109,11 @@ def difference_in_positions(
 
     Elements only in `target` become additions; elements only in `current` become removals.
 
-    Args:
+    # Args:
         target (set[int]): Desired position.
         current (set[int]): Position to be transformed.
 
-    Returns:
+    # Returns:
         velocity (set[tuple[str, int]]): Set of (operator, aisle) operations.
     """
 
@@ -126,11 +126,11 @@ def number_of_elements(beta: float, reference_set: set[int]) -> int:
     """
     Stochastically determines how many elements to operate on, bounded by the set size. Uses `floor(beta)` with a probabilistic +1.
 
-    Args:
+    # Args:
         beta (float): Expected number of elements.
         reference_set (set[int]): Set whose size serves as the upper bound.
 
-    Returns:
+    # Returns:
         n_elements (int): Number of elements to operate on.
     """
 
@@ -152,14 +152,14 @@ def k_tournament_selection(
 
     For each slot, `k` candidates are sampled and the one that best improves the objective is chosen.
 
-    Args:
+    # Args:
         problem (Problem): Dataset information.
         particle (SetParticle): Current particle.
         candidates (set[int]): Aisles not present in `x union pbest union gbest`.
         n_to_add (int): Number of aisles to select.
         k (int): Tournament size.
 
-    Returns:
+    # Returns:
         additions (set[tuple[str, int]]): Addition operations for the selected aisles.
     """
 
@@ -214,11 +214,11 @@ def removal_of_elements(
     """
     Randomly selects `n_to_remove` aisles from the consensus intersection to remove.
 
-    Args:
+    # Args:
         consensus_set (set[int]): Aisles present in `x intersect pbest intersect gbest`.
         n_ro_remove (int): Number of aisles to remove.
 
-    Returns:
+    # Returns:
         removals (set[tuple[str, int]]): Removal operations for the selected aisles.
     """
 
@@ -243,7 +243,7 @@ def SBPSO(
 
     Result is written directly to `problem.result`.
 
-    Args:
+    # Args:
         problem (Problem): Dataset information.
         size (int): Swarm size.
         generations (int): Maximum number of iterations.

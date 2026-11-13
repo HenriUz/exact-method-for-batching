@@ -1,5 +1,6 @@
 import argparse
 
+from methods.exact import solve
 from methods.sbpso import SBPSO
 from process.dataset import Problem
 
@@ -12,7 +13,7 @@ def arguments():
     parser.add_argument("instance", type=str, help="Path to the instance.")
     parser.add_argument(
         "--algorithm",
-        choices=["b&b", "sbpso"],
+        choices=["bb", "sbpso"],
         required=True,
         type=str,
         help="algorithm to be executed (Branch-and-Bound or Set-Based PSO).",
@@ -73,8 +74,8 @@ def main():
     args = arguments()
 
     problem = Problem(args.instance)
-    if args.algorithm == "b&b":
-        pass
+    if args.algorithm == "bb":
+        solve(problem)
     else:
         SBPSO(
             problem,

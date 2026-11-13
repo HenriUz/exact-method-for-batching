@@ -5,7 +5,7 @@ class Problem:
     """
     Reads and processes the data contained in a dataset file.
 
-    Attributes:
+    # Attributes:
         o (int): Total number of orders in the dataset.
         i (int): Total number of items.
         a (int): Total number of available aisles.
@@ -19,7 +19,7 @@ class Problem:
 
     def __init__(self, instance_path: str) -> None:
         """
-        Args:
+        # Args:
             instance_path (str): Path to the instance.
         """
 
@@ -75,10 +75,10 @@ class Problem:
 
         To ensure that the aisles always have the best combination of orders, this function assumes that no orders have been selected at the time it is called. And for optimization purposes, this function returns only the quantity of items in the selected orders.
 
-        Args:
+        # Args:
             aisles_items (list[int]): Available items.
 
-        Returns:
+        # Returns:
             number_items (int): Number of items in the orders.
         """
 
@@ -108,10 +108,10 @@ class Problem:
 
         To ensure that the aisles always have the best combination of orders, this function assumes that no orders have been selected at the time it is called. Unlike `add_orders`, this function returns a list containing the IDs of the selected orders.
 
-        Args:
+        # Args:
             aisles_items (list[int]): Available items.
 
-        Returns:
+        # Returns:
             orders (tuple[int, list[int]]): Order IDs.
         """
 
@@ -143,11 +143,11 @@ class Problem:
 
         Since the methods work directly with the aisles, which have no constraints, and use a greedy function that selects orders while respecting the upper bound and supply constraints (`add_orders`), this function does not check the previous constraints to avoid redundancy.
 
-        Args:
+        # Args:
             number_items (int): Number of items in the orders.
             number_aisles (int): Number of selected aisles.
 
-        Returns:
+        # Returns:
             Objective (float): Value of the objective function.
         """
 
@@ -164,7 +164,7 @@ class Problem:
         - Next line: an integer `a` representing the number of aisles in the solution;
         - Next `a` lines: one integer per line, representing the aisles indices.
 
-        Args:
+        # Args:
             result_path (str): Path to the result file.
         """
 
