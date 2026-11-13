@@ -1,5 +1,8 @@
 import argparse
 
+from methods.sbpso import SBPSO
+from process.dataset import Problem
+
 
 def arguments():
     parser = argparse.ArgumentParser(
@@ -68,6 +71,23 @@ def arguments():
 
 def main():
     args = arguments()
+
+    problem = Problem(args.instance)
+    if args.algorithm == "b&b":
+        pass
+    else:
+        SBPSO(
+            problem,
+            args.size,
+            args.iterations,
+            args.c1,
+            args.c2,
+            args.c3,
+            args.c4,
+            args.k,
+        )
+
+    print(problem.result)
 
 
 if __name__ == "__main__":
