@@ -1,4 +1,5 @@
 import argparse
+from random import seed
 
 from methods.exact import solve
 from methods.sbpso import SBPSO
@@ -72,6 +73,8 @@ def arguments():
 
 def main():
     args = arguments()
+
+    seed(args.seed)
 
     problem = Problem(args.instance)
     if args.algorithm == "bb":
