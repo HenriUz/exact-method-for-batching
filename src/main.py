@@ -78,7 +78,8 @@ def main():
 
     problem = Problem(args.instance)
     if args.algorithm == "bb":
-        solve(problem)
+        status = solve(problem)
+        print(status)
     else:
         SBPSO(
             problem,
