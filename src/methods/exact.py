@@ -111,8 +111,8 @@ def solve(problem: Problem) -> str:
         k += 1
     end = perf_counter()
 
-    problem.result["orders"] = optimal[1]
-    problem.result["aisles"] = optimal[2]
+    problem.result["orders"] = [i for i, valor in enumerate(optimal[1]) if valor == 1]
+    problem.result["aisles"] = [i for i, valor in enumerate(optimal[2]) if valor == 1]
     problem.result["objective"] = round(optimal[0], 2)
     problem.result["time"] = end - start
 
