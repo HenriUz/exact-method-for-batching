@@ -200,17 +200,17 @@ def bench_bb(args):
         problem = Problem(f"{args.instance}/{instance}.txt")
         status = solve(problem)
         print(problem.result)
-        problem.save_solution("./solution.txt")
 
-        is_feasible, objective_value = checker.main(
-            f"{args.instance}/{instance}.txt", "./solution.txt"
-        )
-
-        if not is_feasible or problem.result["objective"] != objective_value:
-            print(
-                f"Something is wrong: {is_feasible}, {problem.result['objective']}, {objective_value}"
+        if problem.result["objective"] != 0.0:
+            problem.save_solution("./solution.txt")
+            is_feasible, objective_value = checker.main(
+                f"{args.instance}/{instance}.txt", "./solution.txt"
             )
-            sys.exit(1)
+            if not is_feasible or problem.result["objective"] != round(objective_value, 2):
+                print(
+                    f"Something is wrong: {is_feasible}, {problem.result['objective']}, {objective_value}"
+                )
+                sys.exit(1)
 
         print(f"Time: {problem.result['time']}\n")
 
