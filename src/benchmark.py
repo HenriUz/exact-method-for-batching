@@ -5,7 +5,7 @@ import statistics
 import sys
 from time import perf_counter
 
-from methods.exact import solve
+from methods.exact import Cuts, solve
 from methods.sbpso import SBPSO
 from process.dataset import Problem
 from utils import checker
@@ -49,6 +49,13 @@ def arguments():
         required=True,
         type=str,
         help="algorithm to be executed (Branch-and-Bound or Set-Based PSO).",
+    )
+    parser.add_argument(
+        "--cuts",
+        choices=[0, 1, 2, 3],
+        type=int,
+        default=Cuts.BOTH,
+        help="cuts to be made (0: no one; 1: MIP only; 2: ours only; 3: both) - optional for Branch-and-Bound, with a default value of 3.",
     )
     parser.add_argument(
         "--size",
@@ -190,7 +197,7 @@ def bench_sbpso(args: argparse.Namespace):
 
 
 def bench_bb(args):
-    with open(f"./benchmarks/{args.algorithm}.csv", "+w") as file:
+    with open(f"./benchmarks/{args.algorithm}_{args.cuts}.csv", "+w") as file:
         file.write("instance,status,objective,gap,time\n")
         file.close()
 
@@ -198,7 +205,7 @@ def bench_bb(args):
         print(f"Dataset: {instance}")
 
         problem = Problem(f"{args.instance}/{instance}.txt")
-        status = solve(problem)
+        status = solve(problem, args.cuts)
         print(problem.result)
 
         if problem.result["objective"] != 0.0:
@@ -206,7 +213,9 @@ def bench_bb(args):
             is_feasible, objective_value = checker.main(
                 f"{args.instance}/{instance}.txt", "./solution.txt"
             )
-            if not is_feasible or problem.result["objective"] != round(objective_value, 2):
+            if not is_feasible or problem.result["objective"] != round(
+                objective_value, 2
+            ):
                 print(
                     f"Something is wrong: {is_feasible}, {problem.result['objective']}, {objective_value}"
                 )
@@ -218,7 +227,7 @@ def bench_bb(args):
         if gap == 0:
             gap = 0.00
 
-        with open(f"./benchmarks/{args.algorithm}.csv", "+a") as file:
+        with open(f"./benchmarks/{args.algorithm}_{args.cuts}.csv", "+a") as file:
             file.write(
                 f"{instance},{status},{problem.result['objective']},{gap},{problem.result['time']}\n"
             )
