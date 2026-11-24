@@ -1,7 +1,7 @@
 import argparse
 from random import seed
 
-from methods.exact import solve
+from methods.exact import Cuts, solve
 from methods.sbpso import SBPSO
 from process.dataset import Problem
 
@@ -18,6 +18,13 @@ def arguments():
         required=True,
         type=str,
         help="algorithm to be executed (Branch-and-Bound or Set-Based PSO).",
+    )
+    parser.add_argument(
+        "--cuts",
+        choices=[0, 1, 2, 3],
+        type=int,
+        default=Cuts.BOTH,
+        help="cuts to be made (0: no one; 1: MIP only; 2: ours only; 3: both) - optional for Branch-and-Bound, with a default value of 3.",
     )
     parser.add_argument(
         "--seed",
@@ -78,7 +85,7 @@ def main():
 
     problem = Problem(args.instance)
     if args.algorithm == "bb":
-        status = solve(problem)
+        status = solve(problem, args.cuts)
         print(status)
     else:
         SBPSO(
