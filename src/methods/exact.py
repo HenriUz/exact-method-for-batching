@@ -152,46 +152,56 @@ def solve(problem: Problem, cuts: Cuts) -> tuple[str, int, int]:
 
 
 def generate_covers(
-    pairs: list[tuple[int, float]], Uo: list[int], ub: int
-) -> list[int] | None:
+    pairs: list[tuple[int, float]], Uo: list[int], ub: int, max_cuts: int = 20
+) -> list[list[int]]:
     """
-    Given the fractional solution (only variables in the node), try to find a minimally violated covering.
+    Given the fractional solution (only variables in the node), trys to find minimum coverages for the problem.
 
     # Args:
     - pairs (list[tuple[int, float]]): orders indices and fractional value.
     - Uo (list[int]): Total number of items in each order.
     - ub (int): Upper bound.
+    - max_cuts (int): Maximum number of cuts.
 
     # Returns:
-    List of order indices (`C`), or `None` if none is found.
+    List of cuts.
     """
 
     xs = dict(pairs)
+    indices = sorted(xs, key=lambda o: (1 - xs[o]) / Uo[o])
 
-    # Order indices, from the largest x* to the smallest
-    indices = sorted(xs, key=lambda o: xs[o], reverse=True)
-    print(indices)
+    cuts: list[list[int]] = []
+    seen: set[frozenset[int]] = set()
 
-    # Accumulate Uo until it exceeds ub.
-    C = []
-    uo = 0
-    for o in indices:
-        C.append(o)
-        uo += Uo[o]
-        if uo > ub:
+    for i in range(len(indices)):
+        # Accumulate Uo until it exceeds ub.
+        C: list[int] = []
+        uo = 0
+        for o in indices[i:]:
+            C.append(o)
+            uo += Uo[o]
+            if uo > ub:
+                break
+        else:
             break
-    else:
-        return None
 
-    # Attempts to remove from the SMALLEST x* to the LARGEST.
-    for o in sorted(C, key=lambda o: xs[o]):
-        if uo - Uo[o] > ub:
-            C.remove(o)
-            uo -= Uo[o]
+        # Attempts to remove from the SMALLEST x* to the LARGEST.
+        for o in sorted(C, key=lambda o: xs[o]):
+            if uo - Uo[o] > ub:
+                C.remove(o)
+                uo -= Uo[o]
 
-    if sum(xs[o] for o in C) > len(C) - 1 + EPS:
-        return C
-    return None
+        key = frozenset(C)
+        if key in seen:
+            continue
+        seen.add(key)
+
+        if sum(1 - xs[o] for o in C) < 1 - EPS:
+            cuts.append(C)
+            if len(cuts) >= max_cuts:
+                break
+
+    return cuts
 
 
 class CoverCutGenerator(mip.ConstrsGenerator):
@@ -217,9 +227,6 @@ class CoverCutGenerator(mip.ConstrsGenerator):
             assert val is not None
             pairs.append((o, val))
 
-        C = generate_covers(pairs, self.Uo, self.ub)
-        if C is None:
-            return
-
-        self.n_cuts += 1
-        model.add_cut(mip.xsum(node[o] for o in C) <= len(C) - 1)
+        for C in generate_covers(pairs, self.Uo, self.ub):
+            self.n_cuts += 1
+            model.add_cut(mip.xsum(node[o] for o in C) <= len(C) - 1)
