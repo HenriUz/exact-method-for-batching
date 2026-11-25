@@ -81,7 +81,7 @@ def solve_k(
     return prob, x, y
 
 
-def solve(problem: Problem, cuts: Cuts) -> str:
+def solve(problem: Problem, cuts: Cuts) -> tuple[str, int, int]:
     """
     Solve the |A| integer problems for Order Batching. The results are saved directly to the variable `problem`.
 
@@ -90,7 +90,7 @@ def solve(problem: Problem, cuts: Cuts) -> str:
         cuts (Cuts): Cuts to be implemented.
 
     # Returns:
-        The status of the solution found: Optimal, Not Solved, Feasible.
+        The status of the solution found (Optimal, Not Solved, Feasible) and the number of calls made to the custom cut function, along with the total number of cuts found.
     """
 
     Uo = [sum(problem.orders[o].values()) for o in range(problem.o)]
@@ -148,11 +148,7 @@ def solve(problem: Problem, cuts: Cuts) -> str:
     problem.result["objective"] = round(optimal[0][0] / optimal[0][1], 2)
     problem.result["time"] = end - start
 
-    if cuts in (Cuts.BOTH, Cuts.OURS_ONLY):
-        print(f"Generate Covers Calls: {n_calls}.")
-        print(f"Cuts found: {n_cuts}")
-
-    return status
+    return status, n_calls, n_cuts
 
 
 def generate_covers(

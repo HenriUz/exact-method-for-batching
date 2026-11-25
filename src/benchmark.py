@@ -197,15 +197,19 @@ def bench_sbpso(args: argparse.Namespace):
 
 
 def bench_bb(args):
+    header = "instance,status,objective,gap,time"
+    if args.cuts in (Cuts.BOTH, Cuts.OURS_ONLY):
+        header += ",n_calls,n_cuts"
+
     with open(f"./benchmarks/{args.algorithm}_{args.cuts}.csv", "+w") as file:
-        file.write("instance,status,objective,gap,time\n")
+        file.write(header + "\n")
         file.close()
 
     for instance, best_obj in bks.items():
         print(f"Dataset: {instance}")
 
         problem = Problem(f"{args.instance}/{instance}.txt")
-        status = solve(problem, args.cuts)
+        status, n_calls, n_cuts = solve(problem, args.cuts)
         print(problem.result)
 
         if problem.result["objective"] != 0.0:
@@ -227,10 +231,12 @@ def bench_bb(args):
         if gap == 0:
             gap = 0.00
 
+        content = f"{instance},{status},{problem.result['objective']},{gap},{problem.result['time']}"
+        if args.cuts in (Cuts.BOTH, Cuts.OURS_ONLY):
+            content += f",{n_calls},{n_cuts}"
+
         with open(f"./benchmarks/{args.algorithm}_{args.cuts}.csv", "+a") as file:
-            file.write(
-                f"{instance},{status},{problem.result['objective']},{gap},{problem.result['time']}\n"
-            )
+            file.write(content + "\n")
             file.close()
 
     os.remove("./solution.txt")
