@@ -85,7 +85,7 @@ def main():
 
     problem = Problem(args.instance)
     if args.algorithm == "bb":
-        status, n_calls, n_cuts = solve(problem, args.cuts)
+        status, n_calls, n_cuts = solve(problem, Cuts(args.cuts))
         print(status, n_calls, n_cuts)
     else:
         SBPSO(

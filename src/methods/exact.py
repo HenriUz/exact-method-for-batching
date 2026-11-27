@@ -75,6 +75,9 @@ def solve_k(
     prob += mip.xsum(y[a] for a in range(problem.a)) == k
 
     # Cuts.
+    if cuts in (Cuts.NO_ONE, Cuts.OURS_ONLY):
+        prob.cuts = 0
+
     if cuts in (Cuts.BOTH, Cuts.OURS_ONLY):
         prob.cuts_generator = CoverCutGenerator(x, Uo, problem.ub)
 
@@ -115,9 +118,6 @@ def solve(problem: Problem, cuts: Cuts) -> tuple[str, int, int]:
 
         prob, x, y = solve_k(problem, Uo, k, optimal[0], cuts)
         prob.verbose = 0
-
-        if cuts in (Cuts.NO_ONE, Cuts.OURS_ONLY):
-            prob.cuts = 0
 
         stats = prob.optimize(max_seconds=remaining)
 

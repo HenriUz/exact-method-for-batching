@@ -197,8 +197,10 @@ def bench_sbpso(args: argparse.Namespace):
 
 
 def bench_bb(args):
+    cuts = Cuts(args.cuts)
+
     header = "instance,status,objective,gap,time"
-    if args.cuts in (Cuts.BOTH, Cuts.OURS_ONLY):
+    if cuts in (Cuts.BOTH, Cuts.OURS_ONLY):
         header += ",n_calls,n_cuts"
 
     with open(f"./benchmarks/{args.algorithm}_{args.cuts}.csv", "+w") as file:
@@ -209,7 +211,7 @@ def bench_bb(args):
         print(f"Dataset: {instance}")
 
         problem = Problem(f"{args.instance}/{instance}.txt")
-        status, n_calls, n_cuts = solve(problem, args.cuts)
+        status, n_calls, n_cuts = solve(problem, cuts)
         print(problem.result)
 
         if problem.result["objective"] != 0.0:
@@ -232,7 +234,7 @@ def bench_bb(args):
             gap = 0.00
 
         content = f"{instance},{status},{problem.result['objective']},{gap},{problem.result['time']}"
-        if args.cuts in (Cuts.BOTH, Cuts.OURS_ONLY):
+        if cuts in (Cuts.BOTH, Cuts.OURS_ONLY):
             content += f",{n_calls},{n_cuts}"
 
         with open(f"./benchmarks/{args.algorithm}_{args.cuts}.csv", "+a") as file:
